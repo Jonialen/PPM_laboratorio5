@@ -1,12 +1,16 @@
 package com.example.lab5jonathandiaz
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +29,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.lab5jonathandiaz.ui.theme.Lab5JonathanDiazTheme
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.platform.LocalContext
 
 class Concerts : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,23 +48,40 @@ class Concerts : ComponentActivity() {
 }
 
 @Composable
-fun ConcertsBase(){
-    Column (
+fun ConcertsBase() {
+    val context = LocalContext.current
+    Column(
         modifier = Modifier.statusBarsPadding()
-    )
-    {
-        TitleApp()
+    ) {
+        TitleApp {
+            val intent = Intent(context, Profile::class.java)
+            context.startActivity(intent)
+        }
         ConcertListScreen()
     }
 }
 
+
 @Composable
-fun TitleApp(){
-    Text(text = "TodoEventos")
+fun TitleApp(navigateToProfile: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = "TodoEventos", style = MaterialTheme.typography.titleLarge)
+        IconButton(onClick = { navigateToProfile() }) {
+            Icon(Icons.Default.AccountCircle, contentDescription = "Profile")
+        }
+    }
 }
+
 
 @Composable
 fun ConcertListScreen(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
     Column(modifier = modifier.fillMaxSize()) {
         Text("Your favorites", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(8.dp))
 
@@ -63,8 +89,14 @@ fun ConcertListScreen(modifier: Modifier = Modifier) {
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(8.dp)
         ) {
-            items(4) {
-                ConcertItem()
+            items(4) { index ->
+                ConcertItem(title = "Concierto $index") { title ->
+                    // Abrimos ListPlaces pasando el título del concierto
+                    val intent = Intent(context, ListPlaces::class.java).apply {
+                        putExtra("concert_title", title)
+                    }
+                    context.startActivity(intent)
+                }
             }
         }
 
@@ -74,19 +106,26 @@ fun ConcertListScreen(modifier: Modifier = Modifier) {
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(8.dp)
         ) {
-            items(10) {
-                ConcertItem()
+            items(10) { index ->
+                ConcertItem(title = "Concierto $index") { title ->
+                    val intent = Intent(context, ListPlaces::class.java).apply {
+                        putExtra("concert_title", title)
+                    }
+                    context.startActivity(intent)
+                }
             }
         }
     }
 }
 
+
 @Composable
-fun ConcertItem() {
+fun ConcertItem(title: String, onItemClicked: (String) -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable { onItemClicked(title) }, // Aquí pasamos el título cuando se presiona
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
@@ -99,7 +138,7 @@ fun ConcertItem() {
                     .fillMaxWidth(),
             )
             Text(
-                text = "Title",
+                text = title, // Muestra el título
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(8.dp)
             )
@@ -111,6 +150,7 @@ fun ConcertItem() {
         }
     }
 }
+
 
 
 @Preview(showBackground = true)

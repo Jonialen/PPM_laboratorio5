@@ -11,7 +11,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val intent = Intent(this, ListPlaces::class.java)
+        val intent = Intent(this, Concerts::class.java)
         startActivity(intent)
 
     }

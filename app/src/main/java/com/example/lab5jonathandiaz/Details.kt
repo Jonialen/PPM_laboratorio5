@@ -22,9 +22,10 @@ class Details : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Lab5JonathanDiazTheme {
+                val placeInfo = intent.getStringExtra("place_info") ?: "No Place Info"
                 Scaffold(
                     content = { innerPadding ->
-                        ConcertDetailScreen(Modifier.padding(innerPadding))
+                        ConcertDetailScreen(Modifier.padding(innerPadding), placeInfo)
                     }
                 )
             }
@@ -33,13 +34,13 @@ class Details : ComponentActivity() {
 }
 
 @Composable
-fun ConcertDetailScreen(modifier: Modifier = Modifier) {
+fun ConcertDetailScreen(modifier: Modifier = Modifier, placeInfo: String) {
     Column(modifier = modifier
         .fillMaxSize()
         .padding(16.dp)
         .statusBarsPadding()){
 
-        titleConcert()
+        titleConcert(placeInfo)
         Spacer(modifier = Modifier.height(8.dp))
         DayDate()
         Spacer(modifier = Modifier.height(8.dp))
@@ -58,7 +59,7 @@ fun ConcertDetailScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun titleConcert() {
+fun titleConcert(placeInfo: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -78,9 +79,9 @@ fun titleConcert() {
                 .padding(8.dp)
         ) {
             Text(
-                text = "Lugar",
+                text = placeInfo,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -106,6 +107,6 @@ fun AboutEvent() {
 @Composable
 fun ConcertDetailScreenPreview() {
     Lab5JonathanDiazTheme {
-        ConcertDetailScreen()
+        ConcertDetailScreen(placeInfo="CasaBran")
     }
 }
